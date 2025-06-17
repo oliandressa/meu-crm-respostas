@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Meu CRM - Respostas Automáticas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .header h1 { font-size: 3em; margin-bottom: 10px; }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard { grid-template-columns: 1fr; }
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .card h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 16px;
+        }
+        
+        .form-group input::placeholder, .form-group textarea::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .btn {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-primary { background: #2196F3; }
+        .btn-primary:hover { background: #1976D2; }
+        
+        .btn-warning { background: #FF9800; }
+        .btn-warning:hover { background: #F57C00; }
+        
+        .btn-danger { background: #f44336; }
+        .btn-danger:hover { background: #da190b; }
+        
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        
+        .posts-list {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .post-item {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .post-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .post-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .webhook-info {
+            background: rgba(0,255,0,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .status { 
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success { background: rgba(0,255,0,0.2); }
+        .status.error { background: rgba(255,0,0,0.2); }
+        .status.info { background: rgba(33,150,243,0.2); }
+        
+        .emoji { font-size: 1.2em; }
+        
+        code {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 5px;
+            display: block;
+            margin: 10px 0;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .respostas-preview {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .resposta-item {
+            margin-bottom: 8px;
+            padding: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .connection-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .connection-online {
+            background: rgba(0,255,0,0.2);
+            color: #4CAF50;
+        }
+
+        .connection-offline {
+            background: rgba(255,0,0,0.2);
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span class="emoji">🚀</span> Meu CRM</h1>
+            <p>Respostas Automáticas Personalizadas para Instagram e TikTok</p>
+            <div id="connectionStatus" class="connection-status connection-offline">
+                🔴 Verificando conexão...
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <h2><span class="emoji">📝</span> Configurar Novo Post</h2>
+                <form id="postForm">
+                    <div class="form-group">
+                        <label><span class="emoji">🔗</span> URL do Post:</label>
+                        <input type="url" id="urlPost" placeholder="https://www.instagram.com/p/ABC123... ou https://www.tiktok.com/@user/video/123..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><span class="emoji">📝</span> Descrição (opcional):</label>
+                        <input type="text" id="descricao" placeholder="Ex: Post sobre produto X, promoção de verão...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><span class="emoji">💬</span> Resposta 1 (1º, 4º, 7º comentário...):</label>
+                        <textarea id="resposta1" rows="3" placeholder="Ex: Obrigado pelo interesse no produto! 😊" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><span class="emoji">💬</span> Resposta 2 (2º, 5º, 8º comentário...):</label>
+                        <textarea id="resposta2" rows="3" placeholder="Ex: Fico feliz que curtiu o post! 👍" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><span class="emoji">💬</span> Resposta 3 (3º, 6º, 9º comentário...):</label>
+                        <textarea id="resposta3" rows="3" placeholder="Ex: Que bom saber que gostou! ❤️" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn" id="submitBtn">
+                        <span class="emoji">💾</span> Salvar Configuração
+                    </button>
+                </form>
+                
+                <div id="status"></div>
+            </div>
+
+            <div class="card">
+                <h2><span class="emoji">📊</span> Status do Sistema</h2>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalPosts">-</span>
+                        <span>Posts Ativos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalRespostas">-</span>
+                        <span>Respostas Enviadas</span>
+                    </div>
+                </div>
+                
+                <div id="systemStatus" class="status success">
+                    <strong><span class="emoji">⏳</span> Verificando Status...</strong><br>
+                    Aguardando conexão com servidor
+                </div>
+                
+                <h3><span class="emoji">🔧</span> URLs do Sistema</h3>
+                <p><strong>Webhook para Meta Business:</strong></p>
+                <code id="webhookUrl">https://seu-projeto.vercel.app/api/webhook</code>
+                <p><strong>Token de Verificação:</strong></p>
+                <code>meu_token_secreto_1012</code>
+                
+                <div class="webhook-info">
+                    <h4><span class="emoji">💡</span> Como Configurar no Meta Business:</h4>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>Acesse o <a href="https://business.facebook.com" target="_blank" style="color: #4CAF50;">Meta Business Manager</a></li>
+                        <li>Vá em Configurações > Webhooks do Instagram</li>
+                        <li>Cole a URL do webhook acima</li>
+                        <li>Use o token de verificação: <strong>meu_token_secreto_1012</strong></li>
+                        <li>Ative eventos de comentários</li>
+                        <li>Teste a conexão</li>
+                    </ol>
+                </div>
+                
+                <h3><span class="emoji">🧪</span> Testes do Sistema</h3>
+                <button onclick="testarConexao()" class="btn btn-primary" id="testConnectionBtn">
+                    <span class="emoji">🔗</span> Testar Conexão
+                </button>
+                <button onclick="testarWebhook()" class="btn btn-warning" id="testWebhookBtn">
+                    <span class="emoji">🎣</span> Testar Webhook
+                </button>
+                <button onclick="simularComentario()" class="btn" id="simulateBtn">
+                    <span class="emoji">💬</span> Simular Comentário
+                </button>
+            </div>
+        </div>
+
+        <div class="posts-list">
+            <h2><span class="emoji">📋</span> Posts Configurados</h2>
+            <div id="postsList">
+                <!-- Posts serão carregados via API -->
+            </div>
+            
+            <div id="emptyState" style="text-align: center; padding: 40px; opacity: 0.7; display: none;">
+                <span class="emoji" style="font-size: 3em;">📱</span>
+                <p>Nenhum post configurado ainda.</p>
+                <p>Configure seu primeiro post acima!</p>
+            </div>
+
+            <div id="loadingPosts" style="text-align: center; padding: 40px;">
+                <span class="emoji" style="font-size: 2em;">⏳</span>
+                <p>Carregando posts...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração da API
+        const API_BASE = window.location.origin;
+        let posts = [];
+        let isOnline = false;
+
+        // Inicialização do sistema
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 CRM inicializando...');
+            
+            // Atualizar URL do webhook
+            document.getElementById('webhookUrl').textContent = `${API_BASE}/api/webhook`;
+            
+            // Verificar conexão inicial
+            verificarConexao();
+            
+            // Carregar posts
+            carregarPosts();
+            
+            // Verificar conexão periodicamente
+            setInterval(verificarConexao, 30000); // A cada 30 segundos
+            
+            console.log('✅ CRM inicializado com sucesso!');
+        });
+
+        // Formulário de novo post
+        document.getElementById('postForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="emoji">⏳</span> Salvando...';
+                
+                const formData = {
+                    url_post: document.getElementById('urlPost').value,
+                    descricao: document.getElementById('descricao').value,
+                    resposta1: document.getElementById('resposta1').value,
+                    resposta2: document.getElementById('resposta2').value,
+                    resposta3: document.getElementById('resposta3').value
+                };
+                
+                // Validar URL
+                if (!formData.url_post.includes('instagram.com') && !formData.url_post.includes('tiktok.com')) {
+                    throw new Error('Por favor, insira uma URL válida do Instagram ou TikTok');
+                }
+                
+                const response = await fetch(`${API_BASE}/api/posts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    mostrarStatus('✅ Post configurado com sucesso! Sistema pronto para responder automaticamente.', 'success');
+                    limparFormulario();
+                    carregarPosts();
+                } else {
+                    throw new Error(result.error || 'Erro ao salvar post');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao salvar post:', error);
+                mostrarStatus(`❌ Erro: ${error.message}`, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        async function verificarConexao() {
+            try {
+                const response = await fetch(`${API_BASE}/api/health`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.status === 'healthy') {
+                    isOnline = true;
+                    atualizarStatusConexao(true);
+                    atualizarStatusSistema('✅ Sistema Online', 'Todas as funcionalidades operacionais', 'success');
+                } else {
+                    throw new Error('Sistema indisponível');
+                }
+                
+            } catch (error) {
+                isOnline = false;
+                atualizarStatusConexao(false);
+                atualizarStatusSistema('❌ Sistema Offline', 'Verifique sua conexão ou tente novamente', 'error');
+                console.error('❌ Erro de conexão:', error);
+            }
+        }
+
+        function atualizarStatusConexao(online) {
+            const statusEl = document.getElementById('connectionStatus');
+            if (online) {
+                statusEl.className = 'connection-status connection-online';
+                statusEl.innerHTML = '🟢 Sistema Online e Conectado';
+            } else {
+                statusEl.className = 'connection-status connection-offline';
+                statusEl.innerHTML = '🔴 Sistema Offline - Verificando...';
+            }
+        }
+
+        function atualizarStatusSistema(titulo, descricao, tipo) {
+            const statusEl = document.getElementById('systemStatus');
+            statusEl.className = `status ${tipo}`;
+            statusEl.innerHTML = `<strong><span class="emoji">${tipo === 'success' ? '✅' : '❌'}</span> ${titulo}</strong><br>${descricao}`;
+        }
+
+        async function carregarPosts() {
+            try {
+                document.getElementById('loadingPosts').style.display = 'block';
+                
+                const response = await fetch(`${API_BASE}/api/posts`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    posts = data.posts;
+                    atualizarListaPosts();
+                    atualizarEstatisticas(data.total, data.posts.reduce((sum, p) => sum + (p.respostasEnviadas || 0), 0));
+                } else {
+                    throw new Error(data.error || 'Erro ao carregar posts');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar posts:', error);
+                posts = [];
+                atualizarListaPosts();
+            } finally {
+                document.getElementById('loadingPosts').style.display = 'none';
+            }
+        }
+
+        async function testarConexao() {
+            const btn = document.getElementById('testConnectionBtn');
+            const originalText = btn.innerHTML;
+            
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="emoji">⏳</span> Testando...';
+                
+                await verificarConexao();
+                
+                if (isOnline) {
+                    mostrarStatus('✅ Conexão testada com sucesso! Todos os endpoints estão respondendo.', 'success');
+                } else {
+                    mostrarStatus('❌ Falha no teste de conexão. Verifique se o servidor está rodando.', 'error');
+                }
+                
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function testarWebhook() {
+            const btn = document.getElementById('testWebhookBtn');
+            const originalText = btn.innerHTML;
+            
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="emoji">⏳</span> Testando...';
+                
+                const response = await fetch(`${API_BASE}/api/test`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        test: true,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    mostrarStatus('🎣 Webhook testado com sucesso! Sistema pronto para receber dados do Instagram/TikTok.', 'success');
+                } else {
+                    throw new Error(result.error || 'Erro no teste');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro no teste de webhook:', error);
+                mostrarStatus(`❌ Erro no teste de webhook: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function simularComentario() {
+            if (posts.length === 0) {
+                mostrarStatus('❌ Configure pelo menos um post antes de simular comentários!', 'error');
+                return;
+            }
+            
+            const btn = document.getElementById('simulateBtn');
+            const originalText = btn.innerHTML;
+            
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="emoji">⏳</span> Simulando...';
+                
+                const comentarios = [
+                    'Adorei este produto! Qual o preço?',
+                    'Muito interessante! Como faço para comprar?',
+                    'Que legal! Vocês entregam em todo Brasil?',
+                    'Excelente! Aceita cartão?',
+                    'Top! Tem outras cores disponíveis?'
+                ];
+                
+                const comentario = comentarios[Math.floor(Math.random() * comentarios.length)];
+                const postAleatorio = posts.filter(p => p.ativo)[0];
+                
+                if (!postAleatorio) {
+                    throw new Error('Nenhum post ativo encontrado!');
+                }
+                
+                const respostas = [postAleatorio.resposta1, postAleatorio.resposta2, postAleatorio.resposta3];
+                const resposta = respostas[Math.floor(Math.random() * 3)];
+                
+                mostrarStatus(`💬 Comentário simulado: "${comentario}"<br>🤖 Resposta automática: "${resposta}"`, 'info');
+                
+                // Simular atualização das estatísticas
+                setTimeout(() => {
+                    carregarPosts();
+                }, 1000);
+                
+            } catch (error) {
+                mostrarStatus(`❌ ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        function atualizarListaPosts() {
+            const lista = document.getElementById('postsList');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (posts.length === 0) {
+                lista.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            lista.innerHTML = posts.map(post => `
+                <div class="post-item">
+                    <div class="post-info">
+                        <strong><span class="emoji">📱</span> ${post.descricao}</strong><br>
+                        <small style="opacity: 0.8;">${post.url_post}</small><br>
+                        <span style="color: ${post.ativo ? '#4CAF50' : '#f44336'};">
+                            ${post.ativo ? '✅ Ativo' : '⏸️ Pausado'}
+                        </span>
+                        <span style="margin-left: 15px; opacity: 0.8;">
+                            📊 ${post.respostasEnviadas || 0} respostas enviadas
+                        </span><br>
+                        <small style="opacity: 0.6;">Criado em: ${new Date(post.criadoEm).toLocaleString('pt-BR')}</small>
+                        
+                        <div class="respostas-preview">
+                            <strong>Respostas configuradas:</strong>
+                            <div class="resposta-item">1️⃣ ${post.resposta1}</div>
+                            <div class="resposta-item">2️⃣ ${post.resposta2}</div>
+                            <div class="resposta-item">3️⃣ ${post.resposta3}</div>
+                        </div>
+                    </div>
+                    <div class="post-actions">
+                        <button class="btn btn-small ${post.ativo ? 'btn-warning' : 'btn-primary'}" onclick="togglePost(${post.id})">
+                            ${post.ativo ? '⏸️ Pausar' : '▶️ Ativar'}
+                        </button>
+                        <button class="btn btn-small btn-primary" onclick="editarPost(${post.id})">✏️ Editar</button>
+                        <button class="btn btn-small btn-danger" onclick="deletarPost(${post.id})">🗑️ Deletar</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function togglePost(id) {
+            try {
+                const post = posts.find(p => p.id === id);
+                if (!post) return;
+                
+                const response = await fetch(`${API_BASE}/api/posts`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        ativo: !post.ativo
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    mostrarStatus(`Post ${!post.ativo ? 'ativado' : 'pausado'} com sucesso!`, 'success');
+                    carregarPosts();
+                } else {
+                    throw new Error(result.error);
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao alterar status do post:', error);
+                mostrarStatus(`❌ Erro: ${error.message}`, 'error');
+            }
+        }
+
+        function editarPost(id) {
+            const post = posts.find(p => p.id === id);
+            if (post) {
+                document.getElementById('urlPost').value = post.url_post;
+                document.getElementById('descricao').value = post.descricao;
+                document.getElementById('resposta1').value = post.resposta1;
+                document.getElementById('resposta2').value = post.resposta2;
+                document.getElementById('resposta3').value = post.resposta3;
+                
+                // Scroll para o formulário
+                document.querySelector('.dashboard').scrollIntoView({ behavior: 'smooth' });
+                
+                mostrarStatus('📝 Post carregado para edição. Faça as alterações e salve novamente.', 'info');
+            }
+        }
+
+        async function deletarPost(id) {
+            if (!confirm('⚠️ Tem certeza que deseja deletar este post? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/posts?id=${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    mostrarStatus('🗑️ Post deletado com sucesso!', 'success');
+                    carregarPosts();
+                } else {
+                    throw new Error(result.error);
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao deletar post:', error);
+                mostrarStatus(`❌ Erro: ${error.message}`, 'error');
+            }
+        }
+
+        function atualizarEstatisticas(totalPosts, totalRespostas) {
+            document.getElementById('totalPosts').textContent = totalPosts || 0;
+            document.getElementById('totalRespostas').textContent = totalRespostas || 0;
+        }
+
+        function mostrarStatus(mensagem, tipo) {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="status ${tipo}">${mensagem}</div>`;
+            setTimeout(() => status.innerHTML = '', 5000);
+        }
+
+        function limparFormulario() {
+            document.getElementById('postForm').reset();
+        }
+    </script>
+</body>
+</html>
